@@ -3,8 +3,9 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Task, PaginatedResponse, TaskStatus } from '../models/models';
 import { FacilityService } from './facility.service';
+import { environment } from '../../../environments/environment';
 
-const API = '/api/tasks';
+const API = environment.apiUrl + '/api/tasks';
 
 @Injectable({ providedIn: 'root' })
 export class TaskService {

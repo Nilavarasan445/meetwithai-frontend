@@ -2,6 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { PaginatedResponse } from '../models/models';
+import { environment } from '../../../environments/environment';
 
 export interface Facility {
   id: number;
@@ -18,7 +19,7 @@ export interface Facility {
   providedIn: 'root',
 })
 export class FacilityService {
-  private apiUrl = '/api/facilities/';
+  private apiUrl = environment.apiUrl + '/api/facilities/';
   
   // Use signals for reactive storage of selected facility
   selectedFacility = signal<Facility | null>(null);

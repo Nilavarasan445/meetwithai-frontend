@@ -3,8 +3,9 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, interval, switchMap, takeWhile } from 'rxjs';
 import { Meeting, PaginatedResponse } from '../models/models';
 import { FacilityService } from './facility.service';
+import { environment } from '../../../environments/environment';
 
-const API = '/api/meetings';
+const API = environment.apiUrl + '/api/meetings';
 
 @Injectable({ providedIn: 'root' })
 export class MeetingService {

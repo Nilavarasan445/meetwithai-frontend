@@ -2,8 +2,9 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { FacilityService } from './facility.service';
+import { environment } from '../../../environments/environment';
 
-const API = '/api/integrations';
+const API = environment.apiUrl + '/api/integrations';
 
 export interface IntegrationStatus {
   google: { connected: boolean; email?: string };
