@@ -61,39 +61,41 @@ import { FacilityService, Facility } from '../../core/services/facility.service'
     </div>
   `,
   styles: [`
-    .facility-container { min-height:100vh; background:#080a12; padding:80px 20px; font-family:'IBM Plex Mono',monospace; color:#e8e8f0; }
+    .facility-container { min-height:100vh; background:var(--bg); padding:80px 20px; font-family:var(--sans); color:var(--text); }
     .header { max-width:800px; margin:0 auto 60px; text-align:center; }
-    .brand { color:#7c6fff; font-size:20px; font-weight:700; margin-bottom:24px; }
-    h1 { font-family:'Syne',sans-serif; font-size:48px; font-weight:800; margin-bottom:12px; }
-    .subtitle { color:#4a5070; font-size:16px; }
+    .brand { color:var(--accent); font-size:20px; font-weight:700; margin-bottom:24px; font-family:var(--mono); }
+    h1 { font-family:var(--mono); font-size:42px; font-weight:700; margin-bottom:12px; letter-spacing:-1px; }
+    .subtitle { color:var(--muted); font-size:15px; }
 
     .workspace-grid { max-width:800px; margin:0 auto; display:grid; grid-template-columns:1fr; gap:16px; }
-    .workspace-card { background:#12141f; border:1px solid #1e2130; border-radius:16px; padding:24px; display:flex; align-items:center; cursor:pointer; transition:all 0.2s; position:relative; overflow:hidden; }
-    .workspace-card:hover { border-color:#7c6fff; background:#161928; transform:translateY(-2px); box-shadow:0 10px 30px rgba(0,0,0,0.5); }
-    .workspace-card .icon { width:56px; height:56px; background:#1e2130; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:700; color:#7c6fff; margin-right:24px; flex-shrink:0; }
-    .workspace-card .content h3 { margin:0 0 4px; font-size:18px; font-weight:700; }
-    .workspace-card .content p { margin:0; font-size:13px; color:#4a5070; }
-    .workspace-card .arrow { margin-left:auto; font-size:20px; color:#4a5070; opacity:0; transition:all 0.2s; }
-    .workspace-card:hover .arrow { opacity:1; transform:translateX(5px); color:#7c6fff; }
+    .workspace-card { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:24px; display:flex; align-items:center; cursor:pointer; transition:all 0.2s; position:relative; overflow:hidden; }
+    .workspace-card:hover { border-color:rgba(255,59,92,0.5); background:#1c1c20; transform:translateY(-2px); box-shadow:0 10px 30px rgba(0,0,0,0.4); }
+    .workspace-card .icon { width:56px; height:56px; background:var(--bg); border:1px solid var(--border); border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:700; color:var(--accent); margin-right:24px; flex-shrink:0; font-family:var(--mono); transition:all 0.2s; }
+    .workspace-card:hover .icon { background:var(--accent-dim); border-color:rgba(255,59,92,0.4); }
+    .workspace-card .content h3 { margin:0 0 4px; font-size:16px; font-weight:600; font-family:var(--mono); color:var(--text); }
+    .workspace-card .content p { margin:0; font-size:13px; color:var(--muted); }
+    .workspace-card .arrow { margin-left:auto; font-size:20px; color:var(--muted); opacity:0; transition:all 0.2s; }
+    .workspace-card:hover .arrow { opacity:1; transform:translateX(5px); color:var(--accent); }
 
-    .workspace-card.create-new { border-style:dashed; border-color:#2a2d3e; }
-    .workspace-card.create-new .icon { background:transparent; border:1px dashed #4a5070; color:#4a5070; }
-    .workspace-card.create-new:hover { border-color:#7c6fff; }
-    .workspace-card.create-new:hover .icon { color:#7c6fff; border-color:#7c6fff; }
+    .workspace-card.create-new { border-style:dashed; border-color:var(--border); }
+    .workspace-card.create-new .icon { background:transparent; border:1px dashed var(--border); color:var(--muted); }
+    .workspace-card.create-new:hover { border-color:rgba(255,59,92,0.4); }
+    .workspace-card.create-new:hover .icon { color:var(--accent); border-color:rgba(255,59,92,0.4); border-style:dashed; }
 
-    .modal { position:fixed; inset:0; background:rgba(4,6,12,0.9); backdrop-filter:blur(10px); display:flex; align-items:center; justify-content:center; z-index:100; padding:20px; }
-    .modal-content { background:#12141f; border:1px solid #1e2130; border-radius:20px; padding:40px; width:100%; max-width:480px; box-shadow:0 20px 60px rgba(0,0,0,0.6); }
-    .modal-content h2 { font-family:'Syne',sans-serif; margin-bottom:32px; font-size:28px; }
+    .modal { position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); display:flex; align-items:center; justify-content:center; z-index:100; padding:20px; }
+    .modal-content { background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:40px; width:100%; max-width:480px; box-shadow:0 20px 60px rgba(0,0,0,0.6); }
+    .modal-content h2 { font-family:var(--mono); margin-bottom:32px; font-size:24px; font-weight:700; color:var(--text); }
     .field { margin-bottom:24px; }
-    label { display:block; color:#4a5070; font-size:11px; letter-spacing:1px; margin-bottom:8px; }
-    input, textarea { width:100%; background:#0d0f14; border:1px solid #1e2130; border-radius:10px; padding:14px; color:#c8c8e0; font-family:'IBM Plex Mono',monospace; font-size:13px; outline:none; box-sizing:border-box; transition:border-color 0.15s; }
-    input:focus, textarea:focus { border-color:#7c6fff; }
+    label { display:block; color:var(--muted); font-size:11px; letter-spacing:1px; margin-bottom:8px; font-family:var(--mono); }
+    input, textarea { width:100%; background:var(--bg); border:1px solid var(--border); border-radius:9px; padding:14px; color:var(--text); font-family:var(--sans); font-size:13px; outline:none; box-sizing:border-box; transition:border-color 0.15s; }
+    input:focus, textarea:focus { border-color:var(--accent); }
     textarea { min-height:100px; resize:vertical; }
     .actions { display:flex; justify-content:flex-end; gap:12px; margin-top:32px; }
-    .btn-primary { background:#7c6fff; color:#white; border:none; border-radius:10px; padding:12px 24px; font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:700; cursor:pointer; }
-    .btn-ghost { background:transparent; color:#4a5070; border:none; padding:12px 24px; font-family:'IBM Plex Mono',monospace; font-size:13px; cursor:pointer; border-radius:10px; }
-    .btn-ghost:hover { background:#1e2130; color:#e8e8f0; }
-    .btn-primary:disabled { opacity:0.5; cursor:not-allowed; }
+    .btn-primary { background:var(--accent); color:#fff; border:none; border-radius:9px; padding:12px 24px; font-family:var(--sans); font-size:13px; font-weight:600; cursor:pointer; transition:background 0.15s; }
+    .btn-primary:hover { background:#ff1f42; }
+    .btn-primary:disabled { opacity:0.4; cursor:not-allowed; }
+    .btn-ghost { background:transparent; color:var(--muted); border:1px solid var(--border); padding:12px 24px; font-family:var(--sans); font-size:13px; cursor:pointer; border-radius:9px; transition:all 0.15s; }
+    .btn-ghost:hover { background:var(--border); color:var(--text); }
   `],
 })
 export class FacilityListComponent implements OnInit {

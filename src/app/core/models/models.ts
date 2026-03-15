@@ -67,10 +67,20 @@ export interface Task {
   description: string;
   assigned_to: string;
   due_date: string | null;
+  estimated_minutes: number | null;
   status: TaskStatus;
   created_at: string;
   updated_at: string;
   facility?: number;
+}
+
+export interface Note {
+  id: string;
+  content: string;
+  created_at: string;
+  updated_at: string;
+  pinned: boolean;
+  color: string;
 }
 
 export interface PaginatedResponse<T> {

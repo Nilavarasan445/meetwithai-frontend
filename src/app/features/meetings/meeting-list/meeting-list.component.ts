@@ -52,31 +52,32 @@ import { Meeting } from '../../../core/models/models';
     </div>
   `,
   styles: [`
-    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Syne:wght@700;800&display=swap');
-    .page { font-family:'IBM Plex Mono',monospace; }
+    .page { font-family:var(--sans); }
     .page-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:32px; }
-    h1 { font-family:'Syne',sans-serif; font-size:28px; font-weight:800; color:#e8e8f0; }
-    .subtitle { color:#4a5070; font-size:12px; margin-top:4px; }
-    .btn-primary { background:#7c6fff; color:#fff; border:none; border-radius:8px; padding:10px 20px; font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:700; cursor:pointer; text-decoration:none; letter-spacing:1px; }
+    h1 { font-family:var(--mono); font-size:28px; font-weight:700; color:var(--text); }
+    .subtitle { color:var(--muted); font-size:12px; margin-top:4px; }
+    .btn-primary { background:var(--accent); color:#fff; border:none; border-radius:9px; padding:10px 20px; font-family:var(--sans); font-size:12px; font-weight:600; cursor:pointer; text-decoration:none; transition:background 0.15s; }
+    .btn-primary:hover { background:#ff1f42; }
 
     .filters { display:flex; gap:12px; margin-bottom:24px; }
-    .search-input, .select-input { background:#0d0f14; border:1px solid #1e2130; border-radius:8px; padding:10px 14px; color:#c8c8e0; font-family:'IBM Plex Mono',monospace; font-size:12px; outline:none; }
+    .search-input, .select-input { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:10px 14px; color:var(--text); font-family:var(--sans); font-size:12px; outline:none; transition:border-color 0.15s; }
+    .search-input:focus, .select-input:focus { border-color:var(--accent); }
     .search-input { flex:1; }
     .select-input { width:180px; }
 
     .meetings-list { display:flex; flex-direction:column; gap:12px; }
-    .meeting-card { background:#12141f; border:1px solid #1e2130; border-radius:12px; padding:20px 24px; cursor:pointer; display:flex; justify-content:space-between; align-items:flex-start; transition:border-color 0.15s; text-decoration:none; color:inherit; }
-    .meeting-card:hover { border-color:#7c6fff; }
-    .meeting-title { font-family:'Syne',sans-serif; font-size:16px; font-weight:700; color:#d8d8ef; margin-bottom:4px; }
-    .meeting-meta { color:#3d4160; font-size:11px; margin-bottom:8px; }
-    .meeting-summary { color:#5a607c; font-size:12px; max-width:500px; line-height:1.6; }
+    .meeting-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px 24px; cursor:pointer; display:flex; justify-content:space-between; align-items:flex-start; transition:border-color 0.15s; text-decoration:none; color:inherit; }
+    .meeting-card:hover { border-color:rgba(255,59,92,0.4); }
+    .meeting-title { font-family:var(--mono); font-size:14px; font-weight:700; color:var(--text); margin-bottom:4px; }
+    .meeting-meta { color:var(--muted); font-size:11px; margin-bottom:8px; font-family:var(--mono); }
+    .meeting-summary { color:var(--muted); font-size:13px; max-width:500px; line-height:1.6; }
     .meeting-right { display:flex; flex-direction:column; align-items:flex-end; gap:8px; flex-shrink:0; }
-    .meeting-counts { color:#3d4160; font-size:11px; }
-    .status-badge { font-size:10px; font-weight:700; padding:3px 10px; border-radius:20px; text-transform:uppercase; letter-spacing:1px; }
-    .status-done { background:#1a2a1a; color:#6ddf8a; }
-    .status-pending,.status-transcribing,.status-analyzing { background:#1a1a2a; color:#7c6fff; }
-    .status-failed { background:#2a1020; color:#ff7090; }
-    .loading, .empty-state { color:#4a5070; text-align:center; padding:60px; }
+    .meeting-counts { color:var(--muted); font-size:11px; font-family:var(--mono); }
+    .status-badge { font-size:10px; font-weight:700; padding:3px 10px; border-radius:20px; text-transform:uppercase; letter-spacing:1px; font-family:var(--mono); }
+    .status-done { background:var(--green-dim); color:var(--green); }
+    .status-pending,.status-transcribing,.status-analyzing { background:var(--accent-dim); color:var(--accent); }
+    .status-failed { background:rgba(255,59,92,0.1); color:var(--accent); }
+    .loading, .empty-state { color:var(--muted); text-align:center; padding:60px; font-family:var(--sans); }
   `],
 })
 export class MeetingListComponent implements OnInit {

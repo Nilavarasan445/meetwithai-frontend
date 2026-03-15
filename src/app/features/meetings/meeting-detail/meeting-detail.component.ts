@@ -133,64 +133,64 @@ import { Meeting, Task, TaskStatus } from '../../../core/models/models';
     <div *ngIf="loading()" class="loading">Loading meeting...</div>
   `,
    styles: [`
-    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Syne:wght@700;800&display=swap');
-    .page { font-family:'IBM Plex Mono',monospace; }
-    .breadcrumb { color:#3d4160; font-size:11px; margin-bottom:16px; } .breadcrumb a { color:#7c6fff; text-decoration:none; }
+    .page { font-family:var(--sans); }
+    .breadcrumb { color:var(--muted); font-size:11px; margin-bottom:16px; font-family:var(--mono); } .breadcrumb a { color:var(--accent); text-decoration:none; }
     .page-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:24px; }
-    .meta { color:#3d4160; font-size:11px; margin-bottom:6px; }
-    h1 { font-family:'Syne',sans-serif; font-size:28px; font-weight:800; color:#e8e8f0; }
-    .status-badge { font-size:10px; font-weight:700; padding:4px 12px; border-radius:20px; text-transform:uppercase; letter-spacing:1px; }
-    .status-done { background:#1a2a1a; color:#6ddf8a; } .status-pending,.status-transcribing,.status-analyzing { background:#1a1a2a; color:#7c6fff; } .status-failed { background:#2a1020; color:#ff7090; }
-    .processing-banner { background:#1a1a2a; border:1px solid #3a3a6a; border-radius:10px; padding:14px 20px; color:#7c6fff; font-size:12px; margin-bottom:24px; }
+    .meta { color:var(--muted); font-size:11px; margin-bottom:6px; font-family:var(--mono); }
+    h1 { font-family:var(--mono); font-size:28px; font-weight:700; color:var(--text); }
+    .status-badge { font-size:10px; font-weight:700; padding:4px 12px; border-radius:20px; text-transform:uppercase; letter-spacing:1px; font-family:var(--mono); }
+    .status-done { background:var(--green-dim); color:var(--green); } .status-pending,.status-transcribing,.status-analyzing { background:var(--accent-dim); color:var(--accent); } .status-failed { background:rgba(255,59,92,0.1); color:var(--accent); }
+    .processing-banner { background:var(--accent-dim); border:1px solid rgba(255,59,92,0.3); border-radius:10px; padding:14px 20px; color:var(--accent); font-size:12px; margin-bottom:24px; }
     .spin { display:inline-block; animation:spin 1s linear infinite; }
     @keyframes spin { to { transform:rotate(360deg); } }
 
-    .tabs { display:flex; border-bottom:1px solid #1e2130; margin-bottom:28px; }
-    .tab { background:transparent; border:none; border-bottom:2px solid transparent; color:#3d4160; font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600; padding:8px 16px; cursor:pointer; transition:all 0.15s; }
-    .tab.active { color:#7c6fff; border-bottom-color:#7c6fff; }
+    .tabs { display:flex; border-bottom:1px solid var(--border); margin-bottom:28px; }
+    .tab { background:transparent; border:none; border-bottom:2px solid transparent; color:var(--muted); font-family:var(--sans); font-size:13px; font-weight:500; padding:8px 16px; cursor:pointer; transition:all 0.15s; }
+    .tab.active { color:var(--accent); border-bottom-color:var(--accent); }
 
     .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
-    .card { background:#12141f; border:1px solid #1e2130; border-radius:12px; padding:24px; }
-    .card-label { color:#3d4160; font-size:10px; letter-spacing:2px; margin-bottom:14px; }
-    .body-text { color:#7070a0; font-size:13px; line-height:1.8; }
-    .decision-item { display:flex; gap:10px; color:#8888a8; font-size:13px; margin-bottom:10px; line-height:1.6; }
-    .bullet { color:#7c6fff; }
-    .empty-text { color:#2e3350; font-size:12px; }
+    .card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:24px; }
+    .card-label { color:var(--muted); font-size:10px; letter-spacing:2px; margin-bottom:14px; font-family:var(--mono); }
+    .body-text { color:var(--muted); font-size:13px; line-height:1.8; }
+    .decision-item { display:flex; gap:10px; color:var(--muted); font-size:13px; margin-bottom:10px; line-height:1.6; }
+    .bullet { color:var(--accent); }
+    .empty-text { color:var(--muted); font-size:12px; opacity:0.5; }
 
     .action-items-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
-    .action-item { background:#0d0f14; border:1px solid #1e2130; border-radius:10px; padding:14px; }
+    .action-item { background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:14px; }
     .assignee { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
-    .avatar { width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-size:10px; font-weight:700; flex-shrink:0; }
+    .avatar { width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-size:10px; font-weight:700; flex-shrink:0; font-family:var(--mono); }
     .avatar.sm { width:20px; height:20px; font-size:9px; }
-    .assignee-name { color:#5a607c; font-size:11px; }
-    .task-title { color:#c0c0d8; font-size:12px; margin-bottom:8px; line-height:1.5; }
-    .task-status { font-size:10px; font-weight:700; padding:2px 8px; border-radius:20px; text-transform:uppercase; }
-    .ts-todo { background:#1e2130; color:#4a5070; } .ts-in_progress { background:#2a2010; color:#d4a030; } .ts-done { background:#1a2a1a; color:#6ddf8a; }
+    .assignee-name { color:var(--muted); font-size:11px; }
+    .task-title { color:var(--text); font-size:12px; margin-bottom:8px; line-height:1.5; }
+    .task-status { font-size:10px; font-weight:700; padding:2px 8px; border-radius:20px; text-transform:uppercase; font-family:var(--mono); }
+    .ts-todo { background:var(--border); color:var(--muted); } .ts-in_progress { background:rgba(255,200,50,0.12); color:#f0b429; } .ts-done { background:var(--green-dim); color:var(--green); }
 
-    .transcript-text { color:#7070a0; font-size:13px; line-height:2; }
+    .transcript-text { color:var(--muted); font-size:13px; line-height:2; }
 
     .kanban { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
-    .kanban-col { background:#0d0f14; border:1px solid #1e2130; border-radius:12px; padding:18px; min-height:200px; }
-    .kanban-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; font-size:11px; color:#4a5070; letter-spacing:1px; }
-    .col-count { background:#1e2130; color:#4a5070; border-radius:20px; font-size:10px; padding:2px 8px; }
-    .task-card { background:#12141f; border:1px solid #1e2130; border-radius:10px; padding:14px; margin-bottom:10px; }
+    .kanban-col { background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:18px; min-height:200px; }
+    .kanban-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; font-size:11px; color:var(--muted); letter-spacing:1px; font-family:var(--mono); }
+    .col-count { background:var(--border); color:var(--muted); border-radius:20px; font-size:10px; padding:2px 8px; }
+    .task-card { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:14px; margin-bottom:10px; }
     .task-meta { display:flex; justify-content:space-between; align-items:center; margin-top:10px; }
-    .assignee-sm { display:flex; align-items:center; gap:6px; color:#4a5070; font-size:10px; }
-    .due { color:#2e3350; font-size:10px; }
+    .assignee-sm { display:flex; align-items:center; gap:6px; color:var(--muted); font-size:10px; }
+    .due { color:var(--muted); font-size:10px; opacity:0.6; }
     .task-actions { display:flex; gap:6px; margin-top:10px; flex-wrap:wrap; }
-    .move-btn { background:#1e2130; border:none; border-radius:6px; color:#4a5070; font-family:'IBM Plex Mono',monospace; font-size:9px; padding:3px 8px; cursor:pointer; }
-    .move-btn:hover { background:#2e3350; color:#7c6fff; }
+    .move-btn { background:var(--border); border:none; border-radius:6px; color:var(--muted); font-family:var(--mono); font-size:9px; padding:3px 8px; cursor:pointer; transition:all 0.15s; }
+    .move-btn:hover { background:var(--accent-dim); color:var(--accent); }
 
     .doc-actions { margin-bottom:16px; }
-    .doc-btn { background:#1e2130; color:#7c6fff; border:1px solid #2e3350; border-radius:8px; padding:8px 18px; font-family:'IBM Plex Mono',monospace; font-size:12px; cursor:pointer; }
-    .doc-card { background:#0d0f14; border:1px solid #1e2130; border-radius:12px; padding:32px; font-family:'IBM Plex Mono',monospace; }
-    .doc-title { font-family:'Syne',sans-serif; font-size:22px; font-weight:800; color:#c0c0d8; margin-bottom:4px; }
-    .doc-meta { color:#3d4160; font-size:11px; margin-bottom:20px; }
-    .divider { border-color:#1e2130; margin-bottom:20px; }
-    .doc-section { margin-bottom:24px; color:#7070a0; font-size:13px; line-height:1.8; }
-    .doc-section-label { color:#3d4160; font-size:10px; letter-spacing:2px; margin-bottom:10px; }
+    .doc-btn { background:var(--surface); color:var(--accent); border:1px solid var(--border); border-radius:8px; padding:8px 18px; font-family:var(--sans); font-size:12px; cursor:pointer; transition:all 0.15s; }
+    .doc-btn:hover { border-color:var(--accent); }
+    .doc-card { background:var(--bg); border:1px solid var(--border); border-radius:12px; padding:32px; font-family:var(--sans); }
+    .doc-title { font-family:var(--mono); font-size:22px; font-weight:700; color:var(--text); margin-bottom:4px; }
+    .doc-meta { color:var(--muted); font-size:11px; margin-bottom:20px; font-family:var(--mono); }
+    .divider { border-color:var(--border); margin-bottom:20px; }
+    .doc-section { margin-bottom:24px; color:var(--muted); font-size:13px; line-height:1.8; }
+    .doc-section-label { color:var(--muted); font-size:10px; letter-spacing:2px; margin-bottom:10px; font-family:var(--mono); opacity:0.6; }
 
-    .loading { color:#4a5070; text-align:center; padding:60px; font-family:'IBM Plex Mono',monospace; }
+    .loading { color:var(--muted); text-align:center; padding:60px; font-family:var(--sans); }
   `],
 })
 export class MeetingDetailComponent implements OnInit {

@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { MeetingService } from '../../core/services/meeting.service';
 import { TaskService } from '../../core/services/task.service';
 import { IntegrationService, IntegrationStatus } from '../../core/services/integration.service';
+import { StandupService, DailyReport } from '../../core/services/standup.service';
 import { Meeting, Task } from '../../core/models/models';
 
 @Component({
@@ -75,6 +76,38 @@ import { Meeting, Task } from '../../core/models/models';
         </div>
       </div>
 
+      <!-- Today's Activity Strip -->
+      <div class="today-strip" *ngIf="todayReport()">
+        <div class="today-header">
+          <span class="today-label">📊 Today's Activity</span>
+          <a routerLink="/report" class="link">Full Report →</a>
+        </div>
+        <div class="today-stats">
+          <div class="today-stat">
+            <span class="ts-value">{{ todayReport()!.total_commits }}</span>
+            <span class="ts-label">commits</span>
+          </div>
+          <div class="ts-divider"></div>
+          <div class="today-stat">
+            <span class="ts-value">{{ todayReport()!.total_prs }}</span>
+            <span class="ts-label">PRs</span>
+          </div>
+          <div class="ts-divider"></div>
+          <div class="today-stat">
+            <span class="ts-value">{{ todayReport()!.total_tasks_done }}</span>
+            <span class="ts-label">tasks done</span>
+          </div>
+          <div class="ts-divider"></div>
+          <div class="today-stat">
+            <span class="ts-value">{{ todayReport()!.total_meetings }}</span>
+            <span class="ts-label">meetings</span>
+          </div>
+          <div class="today-summary" *ngIf="todayReport()!.ai_summary">
+            {{ todayReport()!.ai_summary | slice:0:160 }}…
+          </div>
+        </div>
+      </div>
+
       <!-- Recent Meetings -->
       <div class="section-header">
         <h2>Recent Meetings</h2>
@@ -113,73 +146,84 @@ import { Meeting, Task } from '../../core/models/models';
     </div>
   `,
   styles: [`
-    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=Syne:wght@700;800&display=swap');
-    .page { font-family:'IBM Plex Mono',monospace; color:#e8e8f0; }
+    .page { font-family:var(--sans); color:var(--text); }
     .page-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:28px; }
-    h1 { font-family:'Syne',sans-serif; font-size:32px; font-weight:800; color:#e8e8f0; letter-spacing:-1px; }
-    .subtitle { color:#4a5070; font-size:13px; margin-top:4px; }
+    h1 { font-family:var(--mono); font-size:28px; font-weight:700; color:var(--text); letter-spacing:-1px; }
+    .subtitle { color:var(--muted); font-size:13px; margin-top:4px; }
 
     .header-actions { display:flex; gap:10px; align-items:center; }
-    .btn-primary { background:#7c6fff; color:#fff; border:none; border-radius:8px; padding:10px 20px; font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:700; cursor:pointer; text-decoration:none; letter-spacing:1px; }
+    .btn-primary { background:var(--accent); color:#fff; border:none; border-radius:9px; padding:10px 20px; font-family:var(--sans); font-size:12px; font-weight:600; cursor:pointer; text-decoration:none; letter-spacing:0.3px; transition:background 0.15s; }
+    .btn-primary:hover { background:#ff1f42; }
     .btn-primary.sm { font-size:11px; padding:8px 16px; }
-    .btn-secondary { background:#141628; border:1px solid #1e2130; color:#7070a0; border-radius:8px; padding:10px 18px; font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:600; cursor:pointer; text-decoration:none; }
+    .btn-secondary { background:var(--surface); border:1px solid var(--border); color:var(--muted); border-radius:9px; padding:10px 18px; font-family:var(--sans); font-size:12px; font-weight:500; cursor:pointer; text-decoration:none; transition:all 0.15s; }
+    .btn-secondary:hover { border-color:var(--accent); color:var(--text); }
     .btn-secondary.sm { font-size:11px; padding:8px 14px; }
 
     /* Banner */
-    .integration-banner { background:#0e1020; border:1px solid #2a2a50; border-radius:12px; padding:18px 24px; display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:28px; }
+    .integration-banner { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:18px 24px; display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:28px; }
     .banner-left { display:flex; align-items:center; gap:14px; }
-    .banner-icon { color:#7c6fff; font-size:20px; }
-    .banner-title { color:#c0c0d8; font-size:13px; font-weight:600; margin-bottom:3px; }
-    .banner-desc { color:#3d4160; font-size:11px; }
-    .btn-banner { background:#7c6fff; color:#fff; border:none; border-radius:8px; padding:9px 18px; font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:700; cursor:pointer; text-decoration:none; white-space:nowrap; }
+    .banner-icon { color:var(--accent); font-size:20px; }
+    .banner-title { color:var(--text); font-size:13px; font-weight:600; margin-bottom:3px; }
+    .banner-desc { color:var(--muted); font-size:11px; }
+    .btn-banner { background:var(--accent); color:#fff; border:none; border-radius:8px; padding:9px 18px; font-family:var(--sans); font-size:11px; font-weight:600; cursor:pointer; text-decoration:none; white-space:nowrap; }
 
     /* Strip */
-    .integration-strip { background:#0d0f1a; border:1px solid #1a1d30; border-radius:10px; padding:12px 20px; display:flex; align-items:center; gap:14px; margin-bottom:28px; }
-    .strip-label { color:#2e3350; font-size:10px; letter-spacing:2px; flex-shrink:0; }
+    .integration-strip { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:12px 20px; display:flex; align-items:center; gap:14px; margin-bottom:28px; }
+    .strip-label { color:var(--muted); font-size:10px; letter-spacing:2px; flex-shrink:0; font-family:var(--mono); }
     .strip-badges { display:flex; gap:8px; flex:1; }
-    .strip-badge { display:flex; align-items:center; gap:6px; background:#12141f; border:1px solid #1e2130; border-radius:20px; padding:4px 12px; font-size:11px; color:#7070a0; }
-    .strip-badge.google { border-color:#2a3060; }
-    .strip-badge.ms { border-color:#2a2860; }
-    .strip-manage { color:#4a5070; font-size:11px; text-decoration:none; flex-shrink:0; }
-    .strip-manage:hover { color:#7c6fff; }
+    .strip-badge { display:flex; align-items:center; gap:6px; background:var(--bg); border:1px solid var(--border); border-radius:20px; padding:4px 12px; font-size:11px; color:var(--muted); }
+    .strip-manage { color:var(--muted); font-size:11px; text-decoration:none; flex-shrink:0; }
+    .strip-manage:hover { color:var(--accent); }
 
     /* Stats */
     .stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:40px; }
-    .stat-card { background:#0f1120; border:1px solid #1a1d30; border-radius:14px; padding:22px 24px; }
-    .stat-icon { color:#7c6fff; font-size:18px; margin-bottom:10px; opacity:0.7; }
-    .stat-value { font-family:'Syne',sans-serif; font-size:34px; font-weight:800; color:#e8e8f0; line-height:1; }
-    .stat-label { color:#2e3350; font-size:9px; letter-spacing:2px; margin-top:6px; }
+    .stat-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:22px 24px; }
+    .stat-icon { color:var(--accent); font-size:18px; margin-bottom:10px; opacity:0.7; }
+    .stat-value { font-family:var(--mono); font-size:34px; font-weight:700; color:var(--text); line-height:1; }
+    .stat-label { color:var(--muted); font-size:9px; letter-spacing:2px; margin-top:6px; font-family:var(--mono); }
 
     /* Section */
     .section-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
-    h2 { font-family:'Syne',sans-serif; font-size:16px; font-weight:700; color:#8080a0; }
-    .link { color:#7c6fff; font-size:12px; text-decoration:none; }
-    .link:hover { color:#a090ff; }
+    h2 { font-family:var(--mono); font-size:14px; font-weight:700; color:var(--muted); }
+    .link { color:var(--accent); font-size:12px; text-decoration:none; }
+    .link:hover { opacity:0.8; }
 
     /* Meetings */
     .meetings-list { display:flex; flex-direction:column; gap:10px; }
-    .meeting-card { background:#0f1120; border:1px solid #1a1d30; border-radius:12px; padding:20px 24px; cursor:pointer; display:flex; justify-content:space-between; align-items:flex-start; transition:border-color 0.15s, background 0.15s; text-decoration:none; color:inherit; }
-    .meeting-card:hover { border-color:#7c6fff44; background:#12142a; }
-    .meeting-title { font-family:'Syne',sans-serif; font-size:15px; font-weight:700; color:#d8d8ef; margin-bottom:4px; }
-    .meeting-meta { color:#2e3350; font-size:11px; margin-bottom:8px; }
-    .meeting-summary { color:#484e68; font-size:12px; max-width:480px; line-height:1.6; }
+    .meeting-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px 24px; cursor:pointer; display:flex; justify-content:space-between; align-items:flex-start; transition:border-color 0.15s; text-decoration:none; color:inherit; }
+    .meeting-card:hover { border-color:rgba(255,59,92,0.4); }
+    .meeting-title { font-family:var(--mono); font-size:14px; font-weight:700; color:var(--text); margin-bottom:4px; }
+    .meeting-meta { color:var(--muted); font-size:11px; margin-bottom:8px; font-family:var(--mono); }
+    .meeting-summary { color:var(--muted); font-size:13px; max-width:480px; line-height:1.6; }
     .meeting-right { display:flex; flex-direction:column; align-items:flex-end; gap:8px; flex-shrink:0; }
-    .meeting-counts { color:#2e3350; font-size:11px; }
+    .meeting-counts { color:var(--muted); font-size:11px; font-family:var(--mono); }
 
-    .status-badge { font-size:10px; font-weight:700; padding:3px 10px; border-radius:20px; text-transform:uppercase; letter-spacing:1px; }
-    .status-done { background:#1a2a1a; color:#6ddf8a; }
-    .status-pending,.status-transcribing,.status-analyzing { background:#1a1a2a; color:#7c6fff; }
-    .status-failed { background:#2a1020; color:#ff7090; }
+    .status-badge { font-size:10px; font-weight:700; padding:3px 10px; border-radius:20px; text-transform:uppercase; letter-spacing:1px; font-family:var(--mono); }
+    .status-done { background:var(--green-dim); color:var(--green); }
+    .status-pending,.status-transcribing,.status-analyzing { background:var(--accent-dim); color:var(--accent); }
+    .status-failed { background:rgba(255,59,92,0.1); color:var(--accent); }
 
     /* Empty */
-    .empty-state { text-align:center; padding:60px; color:#3d4160; }
-    .empty-icon { font-size:40px; margin-bottom:12px; color:#2a2a40; }
+    .empty-state { text-align:center; padding:60px; color:var(--muted); }
+    .empty-icon { font-size:40px; margin-bottom:12px; opacity:0.3; }
     .empty-actions { display:flex; gap:10px; justify-content:center; margin-top:16px; }
+
+    /* Today strip */
+    .today-strip { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px 20px; margin-bottom:28px; }
+    .today-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+    .today-label { font-size:13px; font-weight:600; color:var(--text); }
+    .today-stats { display:flex; align-items:center; gap:0; flex-wrap:wrap; }
+    .today-stat { display:flex; flex-direction:column; align-items:center; padding:0 20px; }
+    .today-stat:first-child { padding-left:0; }
+    .ts-value { font-family:var(--mono); font-size:24px; font-weight:700; color:var(--text); line-height:1; }
+    .ts-label { font-size:10px; color:var(--muted); margin-top:4px; font-family:var(--mono); letter-spacing:1px; }
+    .ts-divider { width:1px; height:36px; background:var(--border); flex-shrink:0; }
+    .today-summary { flex-basis:100%; margin-top:14px; padding-top:14px; border-top:1px solid var(--border); font-size:12px; color:var(--muted); line-height:1.6; }
 
     /* Loading */
     .loading { display:flex; justify-content:center; padding:60px; }
     .loading-dots { display:flex; gap:6px; align-items:center; }
-    .loading-dots span { width:6px; height:6px; border-radius:50%; background:#2e3350; animation:pulse 1.2s ease-in-out infinite; }
+    .loading-dots span { width:6px; height:6px; border-radius:50%; background:var(--border); animation:pulse 1.2s ease-in-out infinite; }
     .loading-dots span:nth-child(2) { animation-delay:0.2s; }
     .loading-dots span:nth-child(3) { animation-delay:0.4s; }
     @keyframes pulse { 0%,100%{opacity:0.3;transform:scale(0.8)} 50%{opacity:1;transform:scale(1)} }
@@ -190,6 +234,7 @@ export class DashboardComponent implements OnInit {
   tasks = signal<Task[]>([]);
   loading = signal(true);
   integrationStatus = signal<IntegrationStatus | null>(null);
+  todayReport = signal<DailyReport | null>(null);
 
   totalTasks = () => this.tasks().length;
   doneTasks = () => this.tasks().filter(t => t.status === 'done').length;
@@ -204,6 +249,7 @@ export class DashboardComponent implements OnInit {
     private meetingService: MeetingService,
     private taskService: TaskService,
     private integrationService: IntegrationService,
+    private standupService: StandupService,
   ) {}
 
   ngOnInit() {
@@ -216,6 +262,14 @@ export class DashboardComponent implements OnInit {
     });
     this.integrationService.getStatus().subscribe({
       next: (s: IntegrationStatus) => this.integrationStatus.set(s),
+    });
+    // Load today's report if it exists
+    const today = new Date().toISOString().split('T')[0];
+    this.standupService.listReports().subscribe({
+      next: ({ results }) => {
+        const todayRep = results.find(r => r.date === today);
+        if (todayRep) this.todayReport.set(todayRep);
+      },
     });
   }
 }

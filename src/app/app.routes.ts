@@ -19,7 +19,7 @@ export const routes: Routes = [
   },
   {
     path: 'dashboard',
-    canActivate: [authGuard, facilityGuard],
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./features/dashboard/dashboard.component').then(
         (m) => m.DashboardComponent
@@ -27,7 +27,7 @@ export const routes: Routes = [
   },
   {
     path: 'meetings',
-    canActivate: [authGuard, facilityGuard],
+    canActivate: [authGuard],
     children: [
       {
         path: '',
@@ -58,6 +58,38 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/tasks/task-board/task-board.component').then(
         (m) => m.TaskBoardComponent
+      ),
+  },
+  {
+    path: 'notes',
+    canActivate: [authGuard, facilityGuard],
+    loadComponent: () =>
+      import('./features/notes/notes.component').then(
+        (m) => m.NotesComponent
+      ),
+  },
+  {
+    path: 'standup',
+    canActivate: [authGuard, facilityGuard],
+    loadComponent: () =>
+      import('./features/standup/standup.component').then(
+        (m) => m.StandupComponent
+      ),
+  },
+  {
+    path: 'report',
+    canActivate: [authGuard, facilityGuard],
+    loadComponent: () =>
+      import('./features/standup/daily-report.component').then(
+        (m) => m.DailyReportComponent
+      ),
+  },
+  {
+    path: 'standup/github/callback',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/standup/github-callback.component').then(
+        (m) => m.GithubCallbackComponent
       ),
   },
   {
